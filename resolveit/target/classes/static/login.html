@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>ResolveIT - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-r from-indigo-900 via-blue-800 to-indigo-900 min-h-screen flex items-center justify-center">
+
+<div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
+    <h1 class="text-3xl font-bold text-center text-indigo-800">ResolveIT</h1>
+    <p class="text-center text-gray-500 mb-6">Grievance & Complaint Management System</p>
+
+    <form id="loginForm" class="space-y-5">
+
+        <div>
+            <label class="block text-sm font-semibold mb-1">Login As</label>
+            <select id="role" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-indigo-600">
+                <option value="USER">User</option>
+                <option value="ADMIN">Admin</option>
+            </select>
+        </div>
+
+        <div>
+            <label class="block text-sm font-semibold mb-1">Username</label>
+            <input type="text" id="username" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-indigo-600" placeholder="Enter username" required>
+        </div>
+
+        <div>
+            <label class="block text-sm font-semibold mb-1">Password</label>
+            <input type="password" id="password" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-indigo-600" placeholder="Enter password" required>
+        </div>
+
+        <button type="submit" class="w-full bg-indigo-700 text-white py-3 rounded-xl hover:bg-indigo-800 transition font-semibold">
+            Login
+        </button>
+
+        <div class="text-xs text-center text-gray-600">
+            Demo Credentials:<br>
+            User → user1 / user123<br>
+            Admin → admin / admin123
+        </div>
+
+    </form>
+</div>
+
+<script>
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      const role = document.getElementById("role").value;
+
+      fetch("http://localhost:8080/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if(data.role !== role) {
+          alert("Wrong role selected!");
+          return;
+        }
+
+        localStorage.setItem("user", JSON.stringify(data));
+
+        if(data.role === "ADMIN") {
+          window.location.href = "admin-dashboard.html";
+        } else {
+          window.location.href = "user-dashboard.html";
+        }
+      })
+      .catch(err => alert("Login Failed"));
+    });
+</script>
+
+</body>
+</html>
